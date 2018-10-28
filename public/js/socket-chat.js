@@ -14,6 +14,7 @@ socket.on('connect', function() {
     console.log('Conectado al servidor');
     socket.emit('chatLogin', user, function(resp) {
         console.log('logged users', resp);
+        showUsersPanel(resp);
     });
 });
 
@@ -26,23 +27,26 @@ socket.on('disconnect', function() {
 
 
 // Enviar información
-socket.emit('createMessage', {
-    usuario: 'Fernando',
-    mensaje: 'Hola Mundo'
-}, function(resp) {
-    console.log('respuesta server: ', resp);
-});
+// socket.emit('createMessage', {
+//     user: 'Fernando',
+//     msg: 'Hola Mundo'
+// }, function(resp) {
+//     console.log('respuesta server: ', resp);
+// });
 
 // Escuchar información
 socket.on('createMessage', function(mensaje) {
 
     console.log('Servidor:', mensaje);
+    showMessages(mensaje, false);
+    scrollBottom();
 
 });
 // On User login/logout
 socket.on('personList', function(persons) {
 
     console.log(persons);
+    showUsersPanel(persons);
 
 });
 

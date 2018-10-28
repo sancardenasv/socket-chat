@@ -20,6 +20,7 @@ io.on('connection', (client) => {
         let persons = users.addPerson(client.id, data.name, data.lobby);
         console.log(data);
 
+        client.broadcast.to(data.lobby).emit('createMessage', createMessage('Admin', `${data.name} logged in`));
         client.broadcast.to(data.lobby).emit('personList', users.getPersonsByLoby(data.lobby));
 
         callback(users.getPersonsByLoby(data.lobby));
@@ -32,9 +33,12 @@ io.on('connection', (client) => {
         client.broadcast.to(removedUser.lobby).emit('personList', users.getPersonsByLoby(removedUser.lobby));
     });
 
-    client.on('createMessage', (data) => {
+    client.on('createMessage', (data, callback) => {
         let user = users.getPersonById(client.id);
-        client.broadcast.to(user.lobby).emit('createMessage', createMessage(user.name, data.msg));
+        const msg = createMessage(user.name, data.msg)
+        client.broadcast.to(user.lobby).emit('createMessage', msg);
+
+        callback(msg);
     });
 
     // Private Message
